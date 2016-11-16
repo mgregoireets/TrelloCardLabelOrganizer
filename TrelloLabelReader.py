@@ -4,6 +4,7 @@ apikey=0
 boardName=0
 dictionary={"Bugs","Release","Product launch"}
 
+fixedCardLabels={}
 #TrelloLabelReader.py appkey boardName
 #BoardName is optional
 def get_args():
@@ -27,3 +28,8 @@ def parse_args(appkey,board=None):
 #ignores labels that have a %match < 0.22
 def comparator(label,cutoff=0.22):
     return difflib.get_close_matches(label,dictionary,cutoff=cutoff)[0]
+#initialise a dictionary that will contain the name and id of the cards which labels correspond to
+#  those in the dictionary
+def initialise_dictionary():
+    for d in dictionary:
+        fixedCardLabels[d]=0

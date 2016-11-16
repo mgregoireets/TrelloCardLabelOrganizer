@@ -1,6 +1,9 @@
 import unittest
-from TrelloLabelReader import comparator
+from TrelloLabelReader import initialise_dictionary
 from TrelloLabelReader import parse_args
+from TrelloLabelReader import comparator
+from TrelloLabelReader import dictionary
+from TrelloLabelReader import fixedCardLabels
 
 
 class AppArgs(unittest.TestCase):
@@ -41,6 +44,10 @@ class TestComparator(unittest.TestCase):
         self.assertEquals(ProductLaunchComparator, comparator("Launch Product"))
         self.assertEquals(ProductLaunchComparator, comparator("Product-Launch"))
 
+class TestDictionary(unittest.TestCase):
+    def test_dictionary_init(self):
+        initialise_dictionary()
+        self.assertEquals(dictionary,fixedCardLabels.keys())
 
 if __name__ == '__main__':
     unittest.main()
