@@ -8,7 +8,7 @@ boardName = 0
 username = 0
 boardID = 0
 
-cards=list()
+cards = list()
 
 dictionary = {"Bugs", "Release", "Product launch"}
 
@@ -51,30 +51,41 @@ def initialise_dictionary():
     for d in dictionary:
         fixedCardLabels[d] = 0
 
-
+#gets the card of the users specified board or of all his public boards
 def getCards():
-    boardIds=list()
-    cards=list()
+    boardIds = list()
 
-    boards=get_member_boards()
+    boards = get_member_boards()
     for board in boards:
         boardIds.append(board["id"])
     for id in boardIds:
         cards.append(trello.boards.get_card(id))
-    print(json.dumps(cards, indent=4, sort_keys=True))
+
+#gets all the public boards of the user
 def get_member_boards():
     return trello.members.get_board(username)
 
-def get_board_cards():
-    print(json.dumps(trello.boards.get_card(boardID), indent=4, sort_keys=True))
-
-
+#gets the id of the users boards
 def get_board_id():
     global boardID
-    boards=get_member_boards()
+    boards = get_member_boards()
     for board in boards:
         if board["name"] == boardName:
             return board["id"]
+
+#show each label of a card
+def show_card(name, labels):
+    print "Here are the labels for card: "+name
+    for l in labels:
+        print l["name"]
+
+#extracts teh labels and the cards of the user
+def parse_labels():
+    for board in cards:
+        for card in board:
+            labels = card["labels"]
+            cardname = card["name"]
+            show_card(cardname, labels)
 
 
 initialise_dictionary()
@@ -82,9 +93,10 @@ get_args()
 
 if parse_args(apikey, username, boardName):
     trello = TrelloApi(apikey)
-    if boardName:
-        boardID = get_board_id()
     if boardName and boardID:
+        boardID = get_board_id()
         get_board_cards()
     else:
         getCards()
+    if len(cards) > 0:
+        parse_labels()
