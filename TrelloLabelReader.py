@@ -51,7 +51,8 @@ def initialise_dictionary():
     for d in dictionary:
         fixedCardLabels[d] = list()
 
-#adds all cards in the board
+
+# adds all cards in the board
 def get_board_cards(id):
     cards.append(trello.boards.get_card(id))
 
@@ -88,7 +89,7 @@ def show_card(name, labels):
         print l["name"]
 
 
-# extracts teh labels and the cards of the user
+# extracts the labels and the cards of the user
 def parse_labels():
     for board in cards:
         for card in board:
@@ -96,7 +97,8 @@ def parse_labels():
             cardname = card["name"]
             show_card(cardname, labels)
 
-#Shows the label each cards should have
+
+# Shows the label each cards should have
 def fix_labels():
     print "Here are how the labels should be fixed for each card: "
     for board in cards:
@@ -108,6 +110,24 @@ def fix_labels():
             print fixedlabel + ": "
             for fixedcard in fixedCardLabels[fixedlabel]:
                 print "    " + fixedcard
+
+#Produces a list of all duplicates, the list is separated in lists of each kind of duplicate
+#Function requires a list of tags to check for duplicates
+def process_duplicates(list):
+    duplicates_list = []
+    duplicates = []
+    duplicates_list = difflib.get_close_matches(list[0], list, cutoff=0.3)
+    if duplicates_list:
+        duplicates.append(duplicates_list)
+    else:
+        duplicates_list=list[0]
+        duplicates.append(duplicates_list)
+    list = [dup for dup in list if dup not in duplicates_list]
+    if not list:
+        return duplicates
+    else:
+        duplicates.extend(process_duplicates(list))
+        return duplicates
 
 
 initialise_dictionary()

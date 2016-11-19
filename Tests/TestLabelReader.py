@@ -4,6 +4,7 @@ from TrelloLabelReader import parse_args
 from TrelloLabelReader import comparator
 from TrelloLabelReader import dictionary
 from TrelloLabelReader import fixedCardLabels
+from TrelloLabelReader import process_duplicates
 import TrelloLabelReader
 
 
@@ -51,6 +52,13 @@ class TestDictionary(unittest.TestCase):
     def test_dictionary_init(self):
         initialise_dictionary()
         self.assertEquals(dictionary,set(fixedCardLabels.keys()))
+    def test_process_duplicates(self):
+        list=["bug","bugs","bog","Release","realese","Realease","Product Launch","Launch product","Product-Launch"]
+        duplicates=process_duplicates(list)
+        duplicatesName=[]
+        for dup in duplicates:
+            duplicatesName.append(dup[0])
+        self.assertEquals(["bug","Release","Product Launch"],duplicatesName)
 
 if __name__ == '__main__':
     unittest.main()
