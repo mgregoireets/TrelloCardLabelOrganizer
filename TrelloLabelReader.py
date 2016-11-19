@@ -9,7 +9,7 @@ username = 0
 boardID = 0
 
 cards = list()
-
+labels=[]
 dictionary = {"Bugs", "Release", "Product launch"}
 
 fixedCardLabels = dict()
@@ -93,10 +93,8 @@ def show_card(name, labels):
 def parse_labels():
     for board in cards:
         for card in board:
-            labels = card["labels"]
-            cardname = card["name"]
-            show_card(cardname, labels)
-
+            for cardLabels in card["labels"]:
+                labels.append(cardLabels["name"])
 
 # Shows the label each cards should have
 def fix_labels():
@@ -115,19 +113,17 @@ def fix_labels():
 #Function requires a list of tags to check for duplicates
 def process_duplicates(list):
     duplicates_list = []
-    duplicates = []
-    duplicates_list = difflib.get_close_matches(list[0], list, cutoff=0.3)
-    if duplicates_list:
-        duplicates.append(duplicates_list)
-    else:
-        duplicates_list=list[0]
-        duplicates.append(duplicates_list)
-    list = [dup for dup in list if dup not in duplicates_list]
-    if not list:
-        return duplicates
-    else:
-        duplicates.extend(process_duplicates(list))
-        return duplicates
+    duplicates =[]
+    while len(list)>0:
+        duplicates_list = difflib.get_close_matches(list[0], list, cutoff=0.25)
+        if len(duplicates_list)>1:
+            duplicates.append(duplicates_list)
+        else:
+            for dup in duplicates:
+                if difflib.get_close_matches(list[0], dup, cutoff=0.5):
+                    dup.append(list[0])
+        list = [d for d in list if d not in duplicates_list]
+    return duplicates
 
 
 initialise_dictionary()
@@ -142,4 +138,5 @@ if parse_args(apikey, username, boardName):
         getCards()
     if len(cards) > 0:
         parse_labels()
-        fix_labels()
+        duplicates=process_duplicates(labels)
+        print duplicates
